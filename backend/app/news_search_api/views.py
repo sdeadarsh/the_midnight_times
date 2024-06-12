@@ -48,7 +48,10 @@ class SearchKeywordViewSet(viewsets.ModelViewSet):
                 data_results = SearchResult.objects.filter(keyword=existing_keyword).values(
                     'title', 'description', 'url', 'published_at', 'img').order_by('published_at')
                 if page and limit and int(limit)<len(list(data_results)):
-                    data_results = self.add_pagination(list(data_results),page,limit)
+                    try:
+                        data_results = self.add_pagination(list(data_results),page,limit)
+                    except:
+                        pass
                 return successfull_response({'query': keyword, 'results': data_results})
 
             # Fetch results from News API
@@ -62,7 +65,6 @@ class SearchKeywordViewSet(viewsets.ModelViewSet):
             response = newsapi.get_top_headlines(**param)
 
             # response = requests.get(NEWS_API_URL, params={'q': keyword, 'apiKey': API_KEY})
-            print(response)
             if response['totalResults'] ==0:
                 return successfull_response({}, "No Data Found")
             
@@ -87,7 +89,10 @@ class SearchKeywordViewSet(viewsets.ModelViewSet):
                 
 
             if page and limit and int(limit)<int(response['totalResults']):
-                data_results = self.add_pagination(data_results,page,limit)
+                try:
+                    data_results = self.add_pagination(data_results,page,limit)
+                except:
+                    pass
             
             return successfull_response({'query': keyword, 'results': data_results})
 

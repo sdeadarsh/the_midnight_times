@@ -50,9 +50,12 @@ INSTALLED_APPS = [
     "health_check.storage",
     "health_check.contrib.migrations",
     "health_check.contrib.psutil",
+    'corsheaders',
 ]
-
+CORS_ALLOW_HEADERS = ('*',)
+CORS_ORIGIN_ALLOW_ALL = True
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

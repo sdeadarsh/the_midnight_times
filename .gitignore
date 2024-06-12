@@ -2,7 +2,7 @@
 .idea
 media
 
-venv
+backend/venv
 
 deployment/*.pid
 deployment/*.sock

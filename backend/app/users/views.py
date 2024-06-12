@@ -100,6 +100,16 @@ class UserViewSet(viewsets.ModelViewSet):
         result = [{'keyword': key_value['keyword'], 'count': key_value['count']} for key_value in keyword_data]
 
         return successfull_response(result)
+    
+    @action(methods=['POST'], detail=False)
+    def login(self, request):
+        user_name = request.data.get('user_name')
+        password = request.data.get('password')
+        user = User.objects.filter(user_name=user_name, password=password).values()
+        if user:
+             return successfull_response(list(user)[0], "Valid User")
+        else:
+            return errored_response("Invalid User")
         
 
 
@@ -119,16 +129,4 @@ class UserViewSet(viewsets.ModelViewSet):
     #         form = UserCreationForm()
     #     return render(request, 'users/register.html', {'form': form})
 
-    @action(methods=['POST'], detail=False)
-    def login(self, request):
-        form = AuthenticationForm(request, data=request.data)
-        if form.is_valid():
-            user_name = form.cleaned_data.get('user_name')
-            password = form.cleaned_data.get('password')
-            user = User.objects.filter(user_name=user_name, password=password)
-            if user :
-                return successfull_response({}, "Valid User")
-            else:
-                return errored_response("Invalid User")
-        else:
-            return errored_response("Invalid User")
+
