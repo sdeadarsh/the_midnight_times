@@ -47,7 +47,7 @@ class SearchKeywordViewSet(viewsets.ModelViewSet):
             if existing_keyword:
                 data_results = SearchResult.objects.filter(keyword=existing_keyword).values(
                     'title', 'description', 'url', 'published_at', 'img').order_by('published_at')
-                if page and limit:
+                if page and limit and int(limit)<len(list(data_results)):
                     data_results = self.add_pagination(list(data_results),page,limit)
                 return successfull_response({'query': keyword, 'results': data_results})
 
