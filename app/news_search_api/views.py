@@ -11,9 +11,10 @@ from django.core import paginator
 from the_midnight_times.utils import errored_response, successfull_response
 from users.models import User
 from django.shortcuts import get_object_or_404
+from newsapi import NewsApiClient
 
 API_KEY = '808961e26f894a2ab663361c37dc84bb'
-NEWS_API_URL = 'https://newsapi.org/v2/everything'
+NEWS_API_URL = 'https://newsapi.org/v2/top-headlines?'
 
 
 class SearchKeywordViewSet(viewsets.ModelViewSet):
@@ -37,11 +38,12 @@ class SearchKeywordViewSet(viewsets.ModelViewSet):
             limit = request.GET.get('limit',None)
             keyword = request.data.get('searchBar', None)
             user_id = request.data.get('user_id', None)
+            category = request.GET.get('category', None)
+            language = request.GET.get('language', None)
             if not keyword or  not user_id:
                 return successfull_response({},'Please enter something to search')
             user = get_object_or_404(User, id=user_id)
             existing_keyword = SearchKeyword.objects.filter(user=user, keyword=keyword).first()
-            print(existing_keyword)
             if existing_keyword:
                 data_results = SearchResult.objects.filter(keyword=existing_keyword).values(
                     'title', 'description', 'url', 'published_at', 'img').order_by('published_at')
@@ -50,31 +52,44 @@ class SearchKeywordViewSet(viewsets.ModelViewSet):
                 return successfull_response({'query': keyword, 'results': data_results})
 
             # Fetch results from News API
-            response = requests.get(NEWS_API_URL, params={'q': keyword, 'apiKey': API_KEY})
-            if response.status_code == 200:
-                data = response.json()
-                data_results = []
-                search_keyword = SearchKeyword.objects.create(user=user, keyword=keyword)
-                for article in data['articles']:
-                    result = {
-                        'title': article['title'],
-                        'description': article['description'],
-                        'url': article['url'],
-                        'img': article['urlToImage'],
-                        'published_at': datetime.strptime(article['publishedAt'], '%Y-%m-%dT%H:%M:%SZ')}
-                    data_results.append(result)
-                    SearchResult.objects.create(
-                        keyword=search_keyword,
-                        title=article.get('title', None),
-                        description=article.get('description', None),
-                        url=article.get('url', None),
-                        img=article.get('urlToImage', None),
-                        published_at=datetime.strptime(article.get('publishedAt', None), '%Y-%m-%dT%H:%M:%SZ')
-                        )
 
-                if page and limit:
-                    data_results = self.add_pagination(data_results,page,limit)
-                return successfull_response({'query': keyword, 'results': data_results})
+            newsapi = NewsApiClient(api_key='808961e26f894a2ab663361c37dc84bb')
+            param = {'q':keyword}
+            if category:
+                param['category'] = category
+            if language:
+                param['language'] = language
+            response = newsapi.get_top_headlines(**param)
+
+            # response = requests.get(NEWS_API_URL, params={'q': keyword, 'apiKey': API_KEY})
+            print(response)
+            if response['totalResults'] ==0:
+                return successfull_response({}, "No Data Found")
+            
+            data_results = []
+            search_keyword = SearchKeyword.objects.create(user=user, keyword=keyword)
+            for article in response['articles']:
+                result = {
+                    'title': article['title'],
+                    'description': article['description'],
+                    'url': article['url'],
+                    'img': article['urlToImage'],
+                    'published_at': datetime.strptime(article['publishedAt'], '%Y-%m-%dT%H:%M:%S%z')}
+                data_results.append(result)
+                SearchResult.objects.create(
+                    keyword=search_keyword,
+                    title=article.get('title', None),
+                    description=article.get('description', None),
+                    url=article.get('url', None),
+                    img=article.get('urlToImage', None),
+                    published_at=datetime.strptime(article.get('publishedAt', None), '%Y-%m-%dT%H:%M:%SZ')
+                    )
+                
+
+            if page and limit and int(limit)<int(response['totalResults']):
+                data_results = self.add_pagination(data_results,page,limit)
+            
+            return successfull_response({'query': keyword, 'results': data_results})
 
         except Exception as e:
             print('error', str(e))
@@ -89,65 +104,6 @@ class SearchKeywordViewSet(viewsets.ModelViewSet):
             
 
 
-# def add_pagination(self, dict_data, page, count):
-#         if page and count:
-#             p = paginator.Paginator(dict_data, count)
-#             return p.page(page).object_list
-
-#         return dict_data
-
-
-# def search(request):
-#     try:
-#         if request.method == 'GET':
-#             return render(request, 'news_search_api/search.html')
-#         if request.method == 'POST':
-#             page=request.GET.get('page',None)
-#             limit = request.GET.get('limit',None)
-#             keyword = request.POST.get('searchBar', None)
-#             if not keyword:
-#                 return JsonResponse(
-#                     {'results': list(), 'query': keyword, 'error': True, 'message': 'Please enter something to search'})
-#             # Check for existing keyword and prevent frequent searches
-#             existing_keyword = SearchKeyword.objects.filter(user=request.user, keyword=keyword).first()
-#             if existing_keyword:
-#                 data_results = SearchResult.objects.filter(keyword=existing_keyword).values(
-#                     'title', 'description', 'url', 'published_at', 'img').order_by('published_at')
-#                 if page and limit:
-#                     data_results = add_pagination(list(data_results),page,limit)
-#                 return JsonResponse({'results': data_results, 'query': keyword, 'error': False})
-
-#             # Fetch results from News API
-#             response = requests.get(NEWS_API_URL, params={'q': keyword, 'apiKey': API_KEY})
-#             if response.status_code == 200:
-#                 data = response.json()
-#                 data_results = []
-#                 search_keyword = SearchKeyword.objects.create(user=request.user, keyword=keyword)
-#                 for article in data['articles']:
-#                     result = {
-#                         'title': article['title'],
-#                         'description': article['description'],
-#                         'url': article['url'],
-#                         'img': article['urlToImage'],
-#                         'published_at': datetime.strptime(article['publishedAt'], '%Y-%m-%dT%H:%M:%SZ')
-#                     }
-#                     data_results.append(result)
-#                     SearchResult.objects.create(
-#                         keyword=search_keyword,
-#                         title=article.get('title', None),
-#                         description=article.get('description', None),
-#                         url=article.get('url', None),
-#                         img=article.get('urlToImage', None),
-#                         published_at=datetime.strptime(article.get('publishedAt', None), '%Y-%m-%dT%H:%M:%SZ')
-#                     )
-
-#                 if page and limit:
-#                     data_results = add_pagination(data_results,page,limit)
-#                 return JsonResponse({'results': data_results, 'query': keyword, 'error': False})
-
-#     except Exception as e:
-#         print('error', str(e))
-#         return JsonResponse({'results': "NO DATA", 'query': '', 'error': True, 'message': str(e)})
 
 
 @login_required

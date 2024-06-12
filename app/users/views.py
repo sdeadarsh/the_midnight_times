@@ -11,8 +11,11 @@ from django.core import paginator
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from the_midnight_times.utils import successfull_response, errored_response
-
-
+from .utils import check_if_admin
+from news_search_api.models import SearchKeyword, SearchResult
+from django.utils.dateparse import parse_date
+from django.db.models import Count
+from django.utils.dateparse import parse_datetime
 
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
@@ -57,6 +60,51 @@ class UserViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         User.objects.filter(pk=kwargs['pk']).update(is_active=0)
         return successfull_response({}, "Deleted Successfully")
+    
+    @action(methods=['GET'], detail=False, url_path='get_keyword/(?P<id>\d+)')
+    def get_keyword(self, request, id):
+        response = check_if_admin(id)
+        if not response:
+            return errored_response("only admin is allowed")
+
+        start_date_str = request.GET.get('start_date')
+        end_date_str = request.GET.get('end_date')
+        keyword_searched = request.GET.get('keyword_searched', None)
+
+        # Initialize the queryset
+        keyword_data = SearchKeyword.objects.all()
+
+        # Filter by keyword if provided
+        if keyword_searched:
+            keyword_data = keyword_data.filter(keyword=keyword_searched)
+
+        # Parse and filter by date range if provided
+        if start_date_str and end_date_str:
+            # Fix the formatting of the dates
+            if len(start_date_str.split('-')[1]) == 1:
+                start_date_str = start_date_str.replace('-1T', '-01T')
+            if len(end_date_str.split('-')[1]) == 1:
+                end_date_str = end_date_str.replace('-1T', '-01T')
+            
+            start_date = parse_datetime(start_date_str)
+            end_date = parse_datetime(end_date_str)
+            keyword_data = keyword_data.filter(last_searched__range=(start_date, end_date))
+
+        # Get distinct keywords and count occurrences in a single query
+        keyword_data = keyword_data.values('keyword').annotate(count=Count('keyword')).distinct()
+
+        if not keyword_data.exists():
+            return successfull_response({}, "No Data found")
+
+        # Prepare the result list
+        result = [{'keyword': key_value['keyword'], 'count': key_value['count']} for key_value in keyword_data]
+
+        return successfull_response(result)
+        
+
+
+
+
 
     # @action(methods=['POST'], detail=False)
     # def register(self, request):

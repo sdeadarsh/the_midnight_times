@@ -149,6 +149,10 @@ TEMPLATES = [
         },
     },
 ]
+
+CRONJOBS = [
+    ('*/30 * * * *', 'news_search_api.cron.cron_for_updated_news', '>> ~/cron.log 2>&1')
+    ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

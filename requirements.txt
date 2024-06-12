@@ -12,6 +12,7 @@ django-pwa==1.1.0
 djangorestframework==3.15.1
 google==3.0.0
 idna==3.7
+newsapi-python==0.2.7
 psutil==5.9.8
 requests==2.32.3
 soupsieve==2.5
