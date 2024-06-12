@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+  <link rel="manifest" href="{% static 'newsapp/manifest.json' %}">
+  {% load pwa %}
+
+  <head>
+    {% progressive_web_app_meta %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Web Push notification -->
+    <meta name="vapid-key" content="{{ vapid_key }}">
+    {% if user.id %}
+    <meta name="user_id" content="{{ user.id }}">
+    {% endif %}
+
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <style>
+      a:link {
+        text-decoration: none;
+      }
+
+      .card {
+        height: 750px;
+      }
+
+      .search-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 20vh;
+      }
+
+      .search-bar {
+        width: 100%;
+        max-width: 500px;
+      }
+
+  .results-container {
+      margin: 50px auto;
+      width: 80%;
+      max-width: 800px;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+  }
+  .result-item {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+      cursor: pointer;
+  }
+  .result-item:last-child {
+      border-bottom: none;
+  }
+  .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  }
+  .result-title {
+      font-size: 1.2em;
+      margin-bottom: 5px;
+  }
+  .result-description {
+      display: none;
+      margin-top: 10px;
+  }
+  .published-date {
+      font-size: 0.8em;
+      color: #999;
+  }
+  .result-image {
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+  }
+  .result-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+  }
+
+        .result-link {
+      display: block;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+      text-decoration: none;
+      cursor: pointer;
+  }
+  .result-link:hover {
+      background-color: #0056b3;
+  }
+
+
+    </style>
+    <nav>
+      <div class="nav-wrapper" style="padding: 0px 50px; background-color: #c62828">
+        <a href="{% url 'search' %}" class="brand-logo">The Midnight Times</a>
+        <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="{% url 'search' %}">Home</a></li>
+
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'logout' %}" class="waves-effect waves-light btn green">Logout</a></li>
+          {% else %}
+          <li><a href="{% url 'login' %}" class="waves-effect waves-light btn green">Login</a></li>
+          <li><a href="{% url 'register' %}" class="waves-effect waves-light btn yellow black-text">Signup</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+    <ul id="slide-out" class="sidenav">
+      <li>
+        <div class="user-view">
+
+
+          <a href="#name"><span class="black-text name">{{ user.username }}</span></a>
+          <span class="black-text email">{{ user.email }}</span>
+        </div>
+      </li>
+      <li><a href="{% url 'search' %}" class="waves-effect"><i class="material-icons">home</i>Home</a></li>
+      <li>
+        <div class="divider"></div>
+      </li>
+
+      <li>
+        <div class="divider"></div>
+      </li>
+      {% if user.is_authenticated %}
+      <li><a href="{% url 'logout' %}" class="waves-effect"><i class="material-icons">person</i>Logout</a></li>
+      {% else %}
+      <li><a href="{% url 'login' %}" class="waves-effect"><i class="material-icons">person</i>Login</a></li>
+      <li><a href="{% url 'register' %}" class="waves-effect"><i class="material-icons">person_add</i>Signup</a></li>
+      {% endif %}
+      <li><a href="#!" class="waves-effect"><i class="material-icons">announcement</i>About Us!</a></li>
+      <li><a href="#!" class="waves-effect"><i class="material-icons">contact_phone</i>Contact Us</a></li>
+    </ul>
+
+    <ul class="sidenav" id="mobile-demo">
+      <li><a href="sass.html">Sass</a></li>
+      <li><a href="badges.html">Components</a></li>
+      <li><a href="collapsible.html">Javascript</a></li>
+      <li><a href="mobile.html">Mobile</a></li>
+    </ul>
+    <!-- Dropdown Structure -->
+    <ul id='dropdown1' class='dropdown-content'>
+
+    </ul>
+    {% if messages %}
+    <div class="row container">
+      <div class="col s12 m5">
+        <div class="card-panel teal">
+          <span class="white-text">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+          </span>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <!-- <div class="col-md-8">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  </div> -->
+
+    <!-- Search Bar Container -->
+<div class="search-container">
+    <form id="searchForm" class="search-bar">
+        {% csrf_token %}
+        <div class="input-field">
+            <input id="search" type="text" name="searchBar" placeholder="Search news here">
+            <button class="btn waves-effect waves-light" type="submit">Search</button>
+        </div>
+    </form>
+</div>
+
+    <!-- Results Container -->
+    <div id="resultsContainer"  class="results-container" >
+
+    </div>
+
+    <!-- Body -->
+    {% block body %}{% endblock %}
+
+    <!-- footer -->
+  </body>
+</html>
+
+<script>
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const searchBar = document.querySelector('input[name="searchBar"]').value;
+        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        fetch("{% url 'search' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: new URLSearchParams({
+                'searchBar': searchBar
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = '';
+
+            if (data.error) {
+                resultsContainer.innerHTML = '<p>' + data.message + '</p>';
+            } else if (data.results.length === 0) {
+                resultsContainer.innerHTML = '<p>No results found for "' + data.query + '"</p>';
+            } else {
+           const ul = document.createElement('ul');
+            data.results.forEach(result => {
+                const li = document.createElement('li');
+                li.classList.add('result-item');
+                const image = result.img;
+                if(image===''){
+                image = 'https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg'
+                }
+                                const formattedDate = new Date(result.published_at).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric'
+                });
+
+
+                li.innerHTML = `<div class="result-header">
+                                    <div class="result-title">${result.title}</div>
+                                    <div class="published-date">${formattedDate}</div>
+                                </div>
+                                <div class="result-image">
+                                    <img src=${image} alt="Article Image">
+                                </div>
+                                <p class="result-description">${result.description}</p>
+                                <button class="result-link" onclick="window.open('${result.url}', '_blank')">Read more</button>`;
+
+                li.addEventListener('click', () => {
+                    const description = li.querySelector('.result-description');
+                    const image = li.querySelector('.result-image');
+                    description.style.display = description.style.display === 'none' ? 'block' : 'none';
+                    image.style.display = image.style.display === 'none' ? 'block' : 'none';
+                });
+                ul.appendChild(li);
+            });
+            resultsContainer.appendChild(ul);
+            }
+        })
+        .catch(error => {
+        console.log(error)
+            document.getElementById('resultsContainer').innerHTML = '<p>An error occurred: ' + error.message + '</p>';
+        });
+    });
+</script>
