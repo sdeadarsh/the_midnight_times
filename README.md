@@ -56,7 +56,7 @@ The objective of The Midnight Times project is to build a customer-facing web-ba
    cd the_midnight_times
    ```
 
-2. Create a virtual environment and activate it:
+2. Create a virtual environment and activate it I have used Python-3.9:
    ```sh
    cd backend
    python3 -m venv venv
