@@ -34,12 +34,12 @@ class SearchKeywordViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         try:
-            page=request.GET.get('page',None)
-            limit = request.GET.get('limit',None)
+            page=request.data.get('page',None)
+            limit = request.data.get('limit',None)
             keyword = request.data.get('searchBar', None)
             user_id = request.data.get('user_id', None)
-            category = request.GET.get('category', None)
-            language = request.GET.get('language', None)
+            category = request.data.get('category', None)
+            language = request.data.get('language', None)
             if not keyword or  not user_id:
                 return successfull_response({},'Please enter something to search')
             user = get_object_or_404(User, id=user_id)
