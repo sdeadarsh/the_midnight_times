@@ -14,12 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path as url
 from users import views
+from .config import schema_view
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('news/', include('news_search_api.urls')),
     path('users/', include('users.urls')),
+    url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     # path('accounts/login/', views.custom_login, name='login'),
 ]

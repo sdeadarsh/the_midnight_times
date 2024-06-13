@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "health_check.contrib.migrations",
     "health_check.contrib.psutil",
     'corsheaders',
+    'rest_framework',
+    'drf_yasg',
 ]
 CORS_ALLOW_HEADERS = ('*',)
 CORS_ORIGIN_ALLOW_ALL = True
