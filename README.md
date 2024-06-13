@@ -3,6 +3,10 @@
 ## Objective
 The objective of The Midnight Times project is to build a customer-facing web-based application where users can search for news articles from around the world based on the entered keyword. Additionally, it provides a web portal for users to view the results of their previous searches. This project utilizes the [News API](https://newsapi.org/) to fetch live news and blog articles.
 
+## Swagger
+
+[Swagger](http://127.0.0.1:8000/swagger/)
+
 ## Features
 
 ### User-Facing Features

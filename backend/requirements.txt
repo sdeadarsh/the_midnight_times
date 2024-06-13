@@ -1,6 +1,4 @@
 asgiref==3.8.1
-backports.zoneinfo==0.2.1
-beautifulsoup4==4.12.3
 certifi==2024.6.2
 charset-normalizer==3.3.2
 crispy-forms-materialize==0.2
@@ -11,12 +9,16 @@ django-health-check==3.18.2
 django-materializecss-form==1.1.17
 django-pwa==1.1.0
 djangorestframework==3.15.1
-google==3.0.0
+drf-yasg==1.21.7
 idna==3.7
+inflection==0.5.1
 newsapi-python==0.2.7
+packaging==24.1
 psutil==5.9.8
+pytz==2024.1
+PyYAML==6.0.1
 requests==2.32.3
-soupsieve==2.5
 sqlparse==0.5.0
 typing-extensions==4.12.2
+uritemplate==4.1.1
 urllib3==2.2.1
