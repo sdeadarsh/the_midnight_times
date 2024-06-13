@@ -111,22 +111,3 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             return errored_response("Invalid User")
         
-
-
-
-
-
-    # @action(methods=['POST'], detail=False)
-    # def register(self, request):
-    #     print('in register')
-    #     form = UserCreationForm(request.POST)
-    #     if form.is_valid():
-    #         form.save()
-    #         username = form.cleaned_data.get('username')
-    #         messages.success(request, f'Account created for {username}!')
-    #         return redirect('login')
-    #     else:
-    #         form = UserCreationForm()
-    #     return render(request, 'users/register.html', {'form': form})
-
-

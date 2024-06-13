@@ -107,30 +107,3 @@ class SearchKeywordViewSet(viewsets.ModelViewSet):
 
         return dict_data
             
-
-
-
-
-@login_required
-def results(request):
-    keywords = SearchKeyword.objects.filter(user=request.user)
-    context = {'keywords': keywords, 'error': False}
-    return render(request, 'news_search_api/results.html', context)
-
-class SearchResultViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = SearchResultSerializer
-    queryset = SearchResult.objects.all()
-    http_method_names = ['get', 'post', 'patch', 'delete']
-
-
-    @login_required
-    def results(request):
-        keywords = SearchKeyword.objects.filter(user=request.user)
-        context = {'keywords': keywords, 'error': False}
-        return render(request, 'news_search_api/results.html', context)
-
-
-    
-
-
