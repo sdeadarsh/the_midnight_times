@@ -3,11 +3,21 @@ const filterPopup = document.getElementById('filterPopup');
 const applyFilterBtn = document.getElementById('applyFilterBtn');
 const searchBtn = document.getElementById('searchBtn');
 const closeBtn = document.getElementById('closeBtn');
+const logoutbtn = document.getElementById('logoutbtn');
 // const toggleButton = document.getElementById('togglebtn');
 const newsDetail = document.getElementById('newsDetail');
 const attachNews = document.getElementById('attachNews');
 
 const url = "http://127.0.0.1:8000";
+
+const userId = localStorage.getItem('token');
+if(userId==null){
+    window.location.replace('../index.html');
+}
+logoutbtn.addEventListener('click', () => {
+    localStorage.removeItem('token');
+    window.location.replace('../index.html');
+});
 
 // toggleButton.addEventListener('click', () => {
 //     if (newsDetail.style.display === 'none') {
@@ -44,7 +54,7 @@ searchBtn.addEventListener('click', () => {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ "searchBar": searchInput, "user_id":userId }),
+        body: JSON.stringify({ "searchBar": searchInput, "user_id":userId}),
     })
     .then(response => {
         if (!response.ok) {
@@ -53,7 +63,7 @@ searchBtn.addEventListener('click', () => {
         return response.json();
     })
     .then(data => {
-
+        attachNews.innerHTML = '';
         if (!data.error) {
             console.log(data.result.data.results)
             for(const key in data.result.data.results){
@@ -75,7 +85,7 @@ searchBtn.addEventListener('click', () => {
                 <p class="text-gray-500 mb-1">Published Date: September 1, 2022</p>
                 <div id="newsDetail">
                 <div class="flex justify-center py-2">
-                    <img src=" ${news.img} alt="News Image" class="aspect-[4/3]">
+                    <img src=${news.img} alt="News Image" class="aspect-[4/3]">
                 </div>
                 <div class="flex justify-center px-4">
                     <p class="text-gray-700">${news.description}</p>

@@ -1,7 +1,5 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .models import User
 from.searializers import UserSerializer
@@ -16,6 +14,7 @@ from news_search_api.models import SearchKeyword, SearchResult
 from django.utils.dateparse import parse_date
 from django.db.models import Count
 from django.utils.dateparse import parse_datetime
+from operator import itemgetter
 
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
@@ -30,7 +29,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return dict_data
 
     def list(self, request, *args, **kwargs):
-        data = User.objects.filter(is_admin=False)
+        data = User.objects.filter(is_admin=False).order_by('-quota')
         serialized = UserSerializer(data, many=True)
         return successfull_response(serialized.data)
 
@@ -98,7 +97,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         # Prepare the result list
         result = [{'keyword': key_value['keyword'], 'count': key_value['count']} for key_value in keyword_data]
-
+        result = sorted(result, key=itemgetter('count'), reverse=True)
         return successfull_response(result)
     
     @action(methods=['POST'], detail=False)

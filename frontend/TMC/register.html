@@ -11,15 +11,12 @@
 
 <body class="flex flex-col items-center justify-center h-screen bg-gray-100">
     <div class="bg-white rounded-lg shadow-lg p-8">
-        <div class="flex flex-row justify-between">
-        <h1 class="text-2xl font-bold mb-4">Login</h1>
-        <button id="registerBtn" class="border text-1xl bg-gray-100 font-bold mb-4 p-1">Register</button>
-    </div>
+        <h1 class="text-2xl font-bold mb-4">Register</h1>
         <div class="mb-4 flex justify-between">
-            <button id="admin-tab" class="mr-2 px-4 py-2 bg-gray-200 rounded-lg focus:outline-none">Admin</button>
+            <button id="admin-tab" class="mr-2 px-4 py-2 rounded-lg focus:outline-none">Admin</button>
             <button id="user-tab" class="px-4 py-2 bg-gray-200 rounded-lg focus:outline-none">User</button>
         </div>
-        <form id="login-form">
+        <form id="register-form">
             <div class="mb-4">
                 <label for="username" class="block text-gray-700">Username</label>
                 <input type="text" id="username" name="username" class="border rounded-lg px-3 py-2 w-full" />
@@ -28,14 +25,13 @@
                 <label for="password" class="block text-gray-700">Password</label>
                 <input type="password" id="password" name="password" class="border rounded-lg px-3 py-2 w-full" />
             </div>
-            <button type="submit" class="bg-blue-500 text-white rounded-lg px-4 py-2">Login</button>
+            <button type="submit" class="bg-blue-500 text-white rounded-lg px-4 py-2">Create</button>
         </form>
-        
     </div>
 
 </body>
 
-<script type="module" src="index.js"></script>
+<script type="module" src="register.js"></script>
 
 
 </html>

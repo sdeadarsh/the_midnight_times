@@ -1,10 +1,16 @@
 
+const registerBtn = document.getElementById('registerBtn');
+registerBtn.addEventListener('click', function() {
+    window.location.replace('register.html');
+});
+
 const url = "http://127.0.0.1:8000";
 document.addEventListener('DOMContentLoaded', function() {
     // Default to the user tab
     const userTab = document.getElementById('user-tab');
     const adminTab = document.getElementById('admin-tab');
     const loginForm = document.getElementById('login-form');
+
 
     // Event listener for user tab
     userTab.addEventListener('click', function() {
@@ -41,16 +47,15 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-
-            if (!data.error) {
+            console.log(data);
+            if (!data.result.error) {
                 console.log(data.result.data.id)
                 localStorage.setItem('token', data.result.data.id);
-                if (data.result.is_admin) {
+                if (data.result.data.is_admin) {
                     window.location.replace('admin/admin.html');
                 } else {
                     window.location.replace('newsPage/newsPage.html');
                 }
-
             } else {
                 alert('Invalid username or password');
             }
