@@ -7,7 +7,7 @@ The objective of The Midnight Times project is to build a customer-facing web-ba
 
 [![Watch the video](https://img.youtube.com/vi/jTaA61uWRdM/maxresdefault.jpg)](https://www.youtube.com/watch?v=jTaA61uWRdM)
 
-## Register Page 
+## Registration Page 
 Both user and Admin can register from this page and create an account and they can be specified by clicking on the role button (Admin, User)
 
 ![Image Alt text](/frontend/TMC/images/register.png "Resgister of User OR Admin")
