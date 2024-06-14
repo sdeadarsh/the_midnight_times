@@ -3,6 +3,68 @@
 ## Objective
 The objective of The Midnight Times project is to build a customer-facing web-based application where users can search for news articles from around the world based on the entered keyword. Additionally, it provides a web portal for users to view the results of their previous searches. This project utilizes the [News API](https://newsapi.org/) to fetch live news and blog articles.
 
+## Here is the video demonstration 
+
+[![Watch the video](https://img.youtube.com/vi/jTaA61uWRdM/maxresdefault.jpg)](https://www.youtube.com/watch?v=jTaA61uWRdM)
+
+## Register Page 
+Both user and Admin can register from this page and create an account and they can be specified by clicking on the role button (Admin, User)
+
+![Image Alt text](/frontend/TMC/images/register.png "Resgister of User OR Admin")
+
+## Login Page
+Both the user and Admin can log in from this page and create an account and this can be specified by clicking on the role button (Admin, User)
+
+
+![Image Alt text](/frontend/TMC/images/login.png "Login of User OR Admin")
+
+## Home Screen for User 
+
+Here is the Home screen after the User Login In this screen user can search the news and can also apply for a filter while searching the news
+
+![Image Alt text](/frontend/TMC/images/user_home.png "Home screen for User")
+
+## New search result screen for user
+
+Here is the result after searching for any news from the user along with the filter
+
+Search result for China news
+![Image Alt text](/frontend/TMC/images/user_after_search.png "News search result china")
+
+Search result for news of the election
+![Image Alt text](/frontend/TMC/images/user_after_search_result.png "News search result election")
+
+Filter like language and category of the news
+![Image Alt text](/frontend/TMC/images/user_home_search_filter.png "Filter for new search")
+
+## Admin Dashboard
+
+Here is the dashboard screen for admin login we can see here the trending keyword 
+
+![Image Alt text](/frontend/TMC/images/admin_dashboard.png "Trending Keyword on admin dashboard")
+
+and also can filter to see any specific keyword data and how many times it is used by the user 
+
+![Image Alt text](/frontend/TMC/images/admin_keyword_search.png "Filter for trending keyword")
+
+
+# All user views for admin
+
+Here the admin can see the users under him
+![Image Alt text](/frontend/TMC/images/admin_view_user.png "List of all user on the admin dashboard")
+
+## Edit User Quota by the admin
+
+Here user can edit the details of its users like user name, password, and quota 
+![Image Alt text](/frontend/TMC/images/admin_edit_user.png "Edit user details")
+
+## Finally the swagger for listing all backend api with their CRUD and their details 
+
+![Image Alt text](/frontend/TMC/images/swagger.png "Swagger")
+![Image Alt text](/frontend/TMC/images/swagger2.png "Swagger")
+
+
+
 ## Swagger
 
 [Swagger](http://127.0.0.1:8000/swagger/)
